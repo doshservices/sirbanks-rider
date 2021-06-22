@@ -2,7 +2,7 @@
     package="com.example.sirbank_rider">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="Sirbanks"
+        android:label="SirBanks"
         android:icon="@mipmap/launcher_icon">
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
