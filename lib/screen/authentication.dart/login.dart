@@ -241,9 +241,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     titleColor: Colors.white,
                     buttonColor: Color(0xff24414D),
                     onPress: () {
-                      // _submitLogin();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          kDashboard, (route) => false);
+                      _submitLogin();
+                      // Navigator.of(context).pushNamedAndRemoveUntil(
+                      //     kDashboard, (route) => false);
                     },
                   ),
                 ),

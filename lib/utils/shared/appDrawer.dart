@@ -45,7 +45,8 @@ class _MenuScreensState extends State<MenuScreens> {
 
   @override
   Widget build(BuildContext context) {
-    // final auth = Provider.of<Auth>(context, listen: true);
+    final auth = Provider.of<Auth>(context, listen: false);
+    final user = Provider.of<Auth>(context, listen: true).user;
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -99,7 +100,7 @@ class _MenuScreensState extends State<MenuScreens> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                "Alice Jane",
+                                user.phone,
                                 // 'Balogun Rasheed',
                                 style: TextStyle(
                                     fontSize: 20,
@@ -358,7 +359,7 @@ class _MenuScreensState extends State<MenuScreens> {
                           ),
                           new GestureDetector(
                             onTap: () {
-                              // auth.logout();
+                              auth.logout();
                               Navigator.of(context).pushNamedAndRemoveUntil(
                                   kLoginScreen, (route) => false);
                             },

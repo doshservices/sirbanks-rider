@@ -442,10 +442,10 @@ class _SignupScreenState extends State<SignupScreen> {
                     titleColor: Colors.white,
                     buttonColor: Color(0xff24414D),
                     onPress: () {
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                       // Navigator.of(context).pushReplacementNamed(kLoginScreen);
                       // Navigator.of(context).pushReplacementNamed(KOtpScreen, arguments: {'phone': user.phone});
-                      // signup(context);
+                      signup(context);
                     },
                   ),
                 ),

@@ -48,7 +48,7 @@ class Auth with ChangeNotifier {
     print(data);
     try {
       final response = await http.post(
-        "${config.baseUrl}/onboarding/initiate/?role=driver",
+        "${config.baseUrl}/onboarding/initiate/?role=rider",
         headers: {"content-type": "application/json"},
         body: data,
       );
@@ -73,7 +73,7 @@ class Auth with ChangeNotifier {
     var data = jsonEncode({"phoneOrEmail": email.toString(), "password": password.toString()});
     try {
       final response = await http.post(
-        "${config.baseUrl}/auth/driver/login",
+        "${config.baseUrl}/auth/rider/login",
         headers: {"content-type": "application/json"},
         body: data,
       );
@@ -131,7 +131,7 @@ class Auth with ChangeNotifier {
 
   Future<void> verifyOtp(String phone, String phoneToken) async {
     var data = jsonEncode({
-      "phone": "+2348141240575", 
+      "phone": phone, 
       "otp": phoneToken
       }
     );

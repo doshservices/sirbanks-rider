@@ -27,7 +27,7 @@ class MyActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final user = Provider.of<Auth>(context, listen: true).user;
+    final user = Provider.of<Auth>(context, listen: true).user;
     return Container(
       padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 20.0),
       height: 270,
@@ -68,7 +68,7 @@ class MyActivity extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          "Visa Card",
+                          user.phone,
                           style: TextStyle(
                               color: Color(0xffC8C8C8),
                               fontWeight: FontWeight.w600,

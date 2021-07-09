@@ -46,16 +46,16 @@ class MyApp extends StatelessWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           debugShowCheckedModeBanner: false,
-                home: SplashScreen(),
-                // auth.isAuth == true
-                //     ? DashboardScreen()
-                //     : FutureBuilder(
-                //         future: auth.tryAutoLogin(),
-                //         builder: (ctx, authResultSnapShot) =>
-                //             authResultSnapShot.connectionState ==
-                //                     ConnectionState.waiting
-                //                 ? SplashScreen()
-                //                 : WalkThrough()),
+                home: 
+                auth.isAuth == true
+                    ? DashboardScreen()
+                    : FutureBuilder(
+                        future: auth.tryAutoLogin(),
+                        builder: (ctx, authResultSnapShot) =>
+                            authResultSnapShot.connectionState ==
+                                    ConnectionState.waiting
+                                ? SplashScreen()
+                                : WalkThrough()),
           routes: {
             kSplashscreen: (ctx) => SplashScreen(),
             kWalkthrough: (ctx) => WalkThrough(),
