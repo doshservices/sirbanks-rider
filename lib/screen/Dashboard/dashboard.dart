@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:sirbank_rider/model/mapTypeModel.dart';
 import 'package:sirbank_rider/screen/Dashboard/widget/myActivity.dart';
 import 'package:sirbank_rider/utils/shared/appDrawer.dart';
@@ -47,12 +47,12 @@ class _DashboardScreenState extends State<DashboardScreen>
   Map<PolylineId, Polyline> _polyLines = <PolylineId, Polyline>{};
   PolylineId selectedPolyline;
   bool isShowDefault = false;
-  Position currentLocation;
-  Position _lastKnownPosition;
+  // Position currentLocation;
+  // Position _lastKnownPosition;
 
   // final Geolocator _locationService = Geolocator();
   // Socketio _ioScoket = locator<Socketio>();
-  PermissionStatus permission;
+  // PermissionStatus permission;
 
   List<bool> isSelected;
   bool availableStatus;
@@ -138,10 +138,10 @@ class _DashboardScreenState extends State<DashboardScreen>
     super.dispose();
   }
 
-  Future<void> checkPermission() async {
-    permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
-  }
+  // Future<void> checkPermission() async {
+  //   permission = await PermissionHandler()
+  //       .checkPermissionStatus(PermissionGroup.location);
+  // }
 
   // void fetchLocation() {
   //   print('Fetch location called ==== ...>>>');
