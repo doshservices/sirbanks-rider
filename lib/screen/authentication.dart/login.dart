@@ -14,11 +14,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool furnish = false;
   GlobalKey<FormState> _loginFormKey = GlobalKey();
   GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey();
-  bool _obscurePassword = true, rememberMe = true;
+  bool rememberMe = true;
   String errMsg = "";
   String _userEmail = "";
   String _userPassword = "";
   bool _isLoading = false;
+  bool _hidePassword = true;
 
   _showShackBar(errorMessage) {
     final snackBar = new SnackBar(
@@ -164,18 +165,36 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         SizedBox(height: 30),
                         TextFormField(
+                          obscureText: _hidePassword,
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal),
                           decoration: InputDecoration(
-                            hintText: "Password",
-                            hintStyle: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xffC3BBBB),
-                              fontWeight: FontWeight.w400,
-                            ),
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xffC3BBBB),
+                                fontWeight: FontWeight.w400,
+                              ),
+                              suffixIcon: IconButton(
+                                icon: _hidePassword
+                                    ? Icon(
+                                        Icons.visibility_off,
+                                        color: Color(0xff24414D),
+                                      )
+                                    : Icon(
+                                        Icons.visibility,
+                                        color: Color(0xff24414D),
+                                      ),
+                                onPressed: () {
+                                  setState(() {
+                                    _hidePassword = !_hidePassword;
+                                  });
+                                },
+                                
+                              ),
                           ),
                           validator: (value) {
                             if (value.isEmpty) {
@@ -187,7 +206,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             _userPassword = value;
                           },
                         ),
-                        
                       ],
                     ),
                   ),
@@ -268,27 +286,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 20),
-              //   child: Row(
-              //     crossAxisAlignment: CrossAxisAlignment.center,
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       GestureDetector(
-              //         onTap: () {
-              //           // Navigator.of(context).pushNamed(kLoginScreen);
-              //         },
-              //         child: Text(
-              //           'Forgot password? ',
-              //           style: TextStyle(
-              //               fontSize: 14,
-              //               color: Color(0xffFB5448),
-              //               fontWeight: FontWeight.bold),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sirbank_rider/provider/auth.dart';
+import 'package:sirbank_rider/provider/socket_controller.dart';
 import 'package:sirbank_rider/screen/Dashboard/contactus/contact_us.dart';
 import 'package:sirbank_rider/screen/Dashboard/dashboard.dart';
 import 'package:sirbank_rider/screen/Dashboard/history/history_screen.dart';
@@ -11,6 +12,9 @@ import 'package:sirbank_rider/screen/Dashboard/profile/profile_screen.dart';
 import 'package:sirbank_rider/screen/Dashboard/review/review_screen.dart';
 import 'package:sirbank_rider/screen/Dashboard/settings/settings.dart';
 import 'package:sirbank_rider/screen/Dashboard/termandcondiction/termandcondiction.dart';
+import 'package:sirbank_rider/screen/Dashboard/wallet/addcard_payment.dart';
+import 'package:sirbank_rider/screen/Dashboard/wallet/card_payment_screen.dart';
+import 'package:sirbank_rider/screen/Dashboard/wallet/payment_method.dart';
 import 'package:sirbank_rider/screen/Dashboard/wallet/wallet_screen.dart';
 import 'package:sirbank_rider/screen/authentication.dart/login.dart';
 import 'package:sirbank_rider/screen/authentication.dart/otp_screen.dart';
@@ -33,6 +37,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) {
             return Auth();
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) {
+            return SocketController();
           },
         ),
       ],
@@ -74,6 +83,9 @@ class MyApp extends StatelessWidget {
             KContactUs: (ctx) => ContactUs(),
             KInviteFriendScreen: (ctx) => InviteFriendScreen(),
             KOtpScreen: (ctx) => OtpScreen(),
+            KPaymentMethod : (ctx) => PaymentMethod(),
+            KCardPayment : (ctx) => CardPayment(),
+            KAddCardPayment : (ctx) => AddCardPayment(),
           });})
     );
   }

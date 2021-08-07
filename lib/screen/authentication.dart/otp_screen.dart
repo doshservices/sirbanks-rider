@@ -25,7 +25,6 @@ class _OtpScreenState extends State<OtpScreen> {
   String otpcode;
 
   bool _isLoading = false;
-  bool _isResending = false;
 
   Future<void> verifyOtp(
       BuildContext context, String number, String token) async {

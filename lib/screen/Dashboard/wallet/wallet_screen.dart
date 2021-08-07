@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../constants.dart';
+
 class WalletScreen extends StatefulWidget {
   @override
   _WalletScreenState createState() => _WalletScreenState();
@@ -29,11 +31,12 @@ class _WalletScreenState extends State<WalletScreen> {
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(
-            Icons.menu,
+            Icons.arrow_back,
             size: 30,
             color: Colors.black,
           ),
           onPressed: () {
+            Navigator.of(context).pop();
             // _scaffoldKey.currentState.openDrawer();
           },
         ),
@@ -123,7 +126,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           height: 15,
                         ),
                         Text(
-                          'N43,500',
+                          'N0.00',
                           style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -159,6 +162,9 @@ class _WalletScreenState extends State<WalletScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
+                  onTap: (){
+                    Navigator.of(context).pushNamed(KPaymentMethod);
+                  },
                   title: Text(
                     'Payment method',
                     style: TextStyle(
@@ -194,7 +200,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 horizontal: 15,
               ),
               child: ListView.builder(
-                  itemCount: 7,
+                  itemCount: 0,
                   itemBuilder: (context, i) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),

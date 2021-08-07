@@ -3,19 +3,25 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sirbank_rider/model/card_model.dart';
 import 'package:sirbank_rider/model/http_exception.dart';
 import 'package:sirbank_rider/model/user.dart';
+import 'package:sirbank_rider/utils/socket_utils.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 // import 'package:sirbanks_driver/model/http_exception.dart';
 // import 'package:sirbanks_driver/model/user.dart';
 import '../config.dart' as config;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Auth with ChangeNotifier {
   String _token;
   String _accessTokenType;
   String walletNumber, walletBalance;
-  DateTime _expiryDate;
   String weblink;
   String transactionref;
+  CardModel cardModel = CardModel();
+  static SocketUtils socketUtils;
+  // dynamic socketIo;
 
   User user = User();
 
@@ -37,8 +43,16 @@ class Auth with ChangeNotifier {
     return null;
   }
 
+  static initSocket() {
+    if (null == socketUtils) {
+      socketUtils = SocketUtils();
+    }
+  }
+
   Future<void> signUp(User user, derviceName, deviceUUID) async {
     var data = jsonEncode({
+      "firstName": user.firstName,
+      "lastName": user.lastName,
       "email": user.email,
       "password": user.password,
       "phone": user.phone,
@@ -70,7 +84,8 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-    var data = jsonEncode({"phoneOrEmail": email.toString(), "password": password.toString()});
+    var data = jsonEncode(
+        {"phoneOrEmail": email.toString(), "password": password.toString()});
     try {
       final response = await http.post(
         "${config.baseUrl}/auth/rider/login",
@@ -90,6 +105,8 @@ class Auth with ChangeNotifier {
         _token = resData["data"]["token"];
         User userdata = User();
         userdata.id = resData["data"]["id"];
+        userdata.firstName = resData["data"]["firstName"];
+        userdata.lastName = resData["data"]["lastName"];
 
         userdata.phone = resData["data"]["phone"];
         userdata.email = resData["data"]["email"];
@@ -120,6 +137,8 @@ class Auth with ChangeNotifier {
         'userId': user.id,
         "userPhone": user.phone,
         "userEmail": user.email,
+        "firstname" : user.firstName,
+        "lastname" : user.lastName,
         // "pictureUrl": user.pictureUrl,
       });
       prefs.setString("userData", userData);
@@ -130,11 +149,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> verifyOtp(String phone, String phoneToken) async {
-    var data = jsonEncode({
-      "phone": phone, 
-      "otp": phoneToken
-      }
-    );
+    var data = jsonEncode({"phone": phone, "otp": phoneToken});
 
     try {
       final response = await http.post(
@@ -146,7 +161,7 @@ class Auth with ChangeNotifier {
 
       print(resData);
       print(data);
-      if (resData['status']!="success") {
+      if (resData['status'] != "success") {
         throw HttpException(resData["message"]);
       }
 
@@ -181,6 +196,113 @@ class Auth with ChangeNotifier {
     }
   }
 
+  listenTotrip(IO.Socket socket) async {
+    // final user = Provider.of<Auth>(context, listen: false);
+    print(token);
+    try {
+      socket.on('ERROR', (data) {
+             print(data.toString() +"  hhhhhhhhhhhhhhhhhhhhhhhh ERROR");
+             print("****************");
+      });
+      socket.on('CON', (data) {
+             print(data.toString() +"  hhhhhhhhhhhhhhhhhhhhhhhh");
+             print("****************");
+    });
+      print(socket.connected.toString() + "   tttttttttttttt");
+      socket.emit('GET_TRIP_DETAILS', {
+            "id": "${user.id}",
+            "pickUpLat": "3.123455",
+            "pickUpLon": "3.123455",
+            "dropOffUpLat": "3.123455",
+            "dropOffLon": "3.123455",
+          });
+      socket.onConnect((_) {
+        // return socket;
+        print('connect ik');
+        if (null == socket) {
+          print('Socket is Null, Cannot send message *******************************');
+        } else {
+          socket.emit('GET_TRIP_DETAILS', {
+            "id": "${user.id}",
+            "pickUpLat": "3.123455",
+            "pickUpLon": "3.123455",
+            "dropOffUpLat": "3.123455",
+            "dropOffLon": "3.123455",
+          });
+          
+          socket.on('TRIP_DETAILS', (data) {
+             print(data.toString() +"  hhhhhhhhhhhhhhhhhhhhhhhh");
+          });
+          print('sent ***************');
+          
+        }
+      });
+      notifyListeners();
+    } catch (e) {
+      print(e.toString() + "hhjkkkhjkhjhjhj");
+    }
+  }
+
+  Future<void> getCard() async {
+    try {
+      final response = await http.get(
+        "${config.baseUrl}/payments/cards/addition",
+        headers: {
+          "content-type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+      );
+      var resData = jsonDecode(response.body);
+
+      print(resData);
+      if (resData["status"] == null) {
+        throw HttpException(resData["error"]);
+      }
+      if (resData['status'] == 'success') {
+        CardModel cardModelvalue = CardModel();
+        cardModelvalue.accessCode = resData['data']['accessCode'];
+        cardModelvalue.authorizationUrl = resData['data']['authorizationUrl'];
+        cardModelvalue.reference = resData['data']['reference'];
+
+        cardModel = cardModelvalue;
+      }
+
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> completePayment(reference) async {
+    try {
+      final response = await http.get(
+        "${config.baseUrl}/payments/completion?reference=$reference",
+        headers: {
+          "content-type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+      );
+      var resData = jsonDecode(response.body);
+
+      print(resData);
+      // if (resData["status"] == null) {
+      //   throw HttpException(resData["error"]);
+      // }
+      // if (resData['status'] == 'success'){
+      //   CardModel cardModelvalue = CardModel();
+      //   cardModelvalue.accessCode = resData['data']['accessCode'];
+      //   cardModelvalue.authorizationUrl = resData['data']['authorizationUrl'];
+      //   cardModelvalue.reference = resData['data']['reference'];
+
+      //   cardModel = cardModelvalue;
+      // }
+
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
+
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     await Future.delayed(Duration(milliseconds: 2000), () {
@@ -195,6 +317,10 @@ class Auth with ChangeNotifier {
       user.id = extractedUserData["userId"];
       user.email = extractedUserData["userEmail"];
       user.phone = extractedUserData["userPhone"];
+      user.firstName = extractedUserData["firstname"];
+      user.lastName = extractedUserData["lastname"];
+      // resData["data"]["firstName"];
+      //   userdata.lastName = resData["data"]["lastName"];
       // user.pictureUrl = extractedUserData["pictureUrl"];
       notifyListeners();
       // _autoLogout();

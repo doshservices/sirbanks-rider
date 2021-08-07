@@ -19,13 +19,11 @@ class _WalkThroughState extends State<WalkThrough> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _pageController.dispose();
     if (timer != null) {
@@ -41,7 +39,6 @@ class _WalkThroughState extends State<WalkThrough> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       if (_currentPage < 2) {

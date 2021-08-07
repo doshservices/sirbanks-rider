@@ -1,4 +1,3 @@
-import 'dart:async';
 import "package:flutter/material.dart";
 import 'package:sirbank_rider/utils/shared/rounded_raisedbutton.dart';
 
@@ -12,13 +11,11 @@ class EnableLocationScreen extends StatefulWidget {
 class _EnableLocationScreenState extends State<EnableLocationScreen> {
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

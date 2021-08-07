@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:sirbank_rider/provider/auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<Auth>(context, listen: true).user;
     return Scaffold(
       backgroundColor: Color(0xffF2F2F2),
       appBar: AppBar(
@@ -78,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 10,
                     ),
                     Text(
-                      'Balogun Rasheed',
+                      user.firstName + "  " + user.lastName,
                       style: TextStyle(
                           fontSize: 24,
                           color: Colors.black,
@@ -144,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       Text(
-                        'Balogun1123',
+                        user.firstName + "  " + user.lastName,
                         style: TextStyle(
                             fontSize: 16,
                             color: Color(0xffE3E8E9),
@@ -185,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       Text(
-                        '08033827907',
+                        user.phone,
                         style: TextStyle(
                             fontSize: 16,
                             color: Color(0xffE3E8E9),
@@ -226,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       Text(
-                        'Balorash@gmail.com',
+                        user.email,
                         style: TextStyle(
                             fontSize: 16,
                             color: Color(0xffE3E8E9),
@@ -249,85 +252,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             height: 10,
           ),
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Gender',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Male',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xffE3E8E9),
-                            fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Color(0xffCFCFCF),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   color: Colors.white,
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Text(
+          //           'Gender',
+          //           style: TextStyle(
+          //               fontSize: 16,
+          //               color: Colors.black,
+          //               fontWeight: FontWeight.w600),
+          //           textAlign: TextAlign.left,
+          //         ),
+          //         Row(
+          //           children: [
+          //             Text(
+          //               'Male',
+          //               style: TextStyle(
+          //                   fontSize: 16,
+          //                   color: Color(0xffE3E8E9),
+          //                   fontWeight: FontWeight.w600),
+          //               textAlign: TextAlign.left,
+          //             ),
+          //             SizedBox(
+          //               width: 10,
+          //             ),
+          //             Icon(
+          //               Icons.keyboard_arrow_right,
+          //               color: Color(0xffCFCFCF),
+          //             )
+          //           ],
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
           SizedBox(
             height: 10,
           ),
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Birthday',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'April 5,1979',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xffE3E8E9),
-                            fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Color(0xffCFCFCF),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   color: Colors.white,
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Text(
+          //           'Birthday',
+          //           style: TextStyle(
+          //               fontSize: 16,
+          //               color: Colors.black,
+          //               fontWeight: FontWeight.w600),
+          //           textAlign: TextAlign.left,
+          //         ),
+          //         Row(
+          //           children: [
+          //             Text(
+          //               'April 5,1979',
+          //               style: TextStyle(
+          //                   fontSize: 16,
+          //                   color: Color(0xffE3E8E9),
+          //                   fontWeight: FontWeight.w600),
+          //               textAlign: TextAlign.left,
+          //             ),
+          //             SizedBox(
+          //               width: 10,
+          //             ),
+          //             Icon(
+          //               Icons.keyboard_arrow_right,
+          //               color: Color(0xffCFCFCF),
+          //             )
+          //           ],
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
           SizedBox(
             height: 10,
           )

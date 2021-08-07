@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sirbank_rider/provider/auth.dart';
+import 'package:sirbank_rider/provider/socket_controller.dart';
 import 'package:sirbank_rider/utils/shared/rounded_raisedbutton.dart';
 // import '../../theme/style.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
 
-class MyActivity extends StatelessWidget {
+class MyActivity extends StatefulWidget {
   final String userImage;
   final String userName;
   final String level;
@@ -24,6 +25,13 @@ class MyActivity extends StatelessWidget {
     this.totalDistance,
     this.totalJob,
   }) : super(key: key);
+
+  @override
+  _MyActivityState createState() => _MyActivityState();
+}
+
+class _MyActivityState extends State<MyActivity> {
+  bool _isloading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +76,7 @@ class MyActivity extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          user.phone,
+                          user.firstName + "  " + user.lastName,
                           style: TextStyle(
                               color: Color(0xffC8C8C8),
                               fontWeight: FontWeight.w600,
@@ -98,7 +106,7 @@ class MyActivity extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          "N43,000",
+                          "N0.00",
                           style: TextStyle(
                               color: Color(0xff24414D),
                               fontWeight: FontWeight.w600,
@@ -155,10 +163,27 @@ class MyActivity extends StatelessWidget {
             width: double.infinity,
             child: RoundedRaisedButton(
               // circleborderRadius: 10,
+              isLoading: _isloading,
               title: "Book ride",
               titleColor: Colors.white,
               buttonColor: Color(0xff24414D),
-              onPress: () {
+              onPress: () async{
+                try{
+                  setState(() {
+                    _isloading = true;
+                  });
+                  await Auth.socketUtils.emitGetTripDetails(user.id);
+                  await Auth.socketUtils.listenForNewCare(SocketController().registerPractitionerListeners());
+                  setState(() {
+                    _isloading = false;
+                  });
+                }catch(e){
+                  setState(() {
+                    _isloading = false;
+                  });
+                  print(e.toString() + "rider");
+                }
+                
                 // Navigator.of(context).pushNamed(kLoginScreen);
                 // Navigator.of(context).pushNamedAndRemoveUntil(
                 //     kDashbord, (route) => false);

@@ -15,10 +15,9 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  bool _termsAndCondition = false;
   GlobalKey<FormState> _regFormKey = GlobalKey();
   GlobalKey<ScaffoldState> _regscaffoldkey = GlobalKey();
-  String _selectedCountryType = "", phone;
+  String phone;
   String deviceModel, deviceName, deviceUUID;
   bool _isLoading = false;
   bool _hidePassword = true, _hideConfirmPassword = true;
@@ -204,6 +203,82 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         Column(
                           children: [
+                            Column(
+                          children: [
+                            TextFormField(
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                focusColor: Colors.black,
+                                hintText: "FirstName",
+                                hintStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xffC3BBBB),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return "FirstName required";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onSaved: (value) {
+                                user.firstName = value;
+                              },
+                            ),
+                            Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.black,
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Column(
+                          children: [
+                            TextFormField(
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                focusColor: Colors.black,
+                                hintText: "LastName",
+                                hintStyle: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xffC3BBBB),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return "LastName required";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onSaved: (value) {
+                                user.lastName = value;
+                              },
+                            ),
+                            Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.black,
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 20),
                             TextFormField(
                               style: TextStyle(
                                   color: Colors.black,

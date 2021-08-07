@@ -27,3 +27,6 @@ const KTermandCondition = "termandCondition";
 const KContactUs = "contactUs";
 const KInviteFriendScreen = "inviteFriendScreen";
 const KOtpScreen = 'otpScreen';
+const KPaymentMethod = 'paymentMethod';
+const KCardPayment = 'cardPayment';
+const KAddCardPayment = 'addCardPayment';

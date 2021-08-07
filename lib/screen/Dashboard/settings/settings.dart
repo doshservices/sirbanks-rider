@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sirbank_rider/provider/auth.dart';
 
 import '../../../constants.dart';
 
@@ -8,8 +10,10 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<Auth>(context, listen: true).user;
     return Scaffold(
       backgroundColor: Color(0xffF2F2F2),
       appBar: AppBar(
@@ -17,11 +21,12 @@ class _SettingScreenState extends State<SettingScreen> {
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(
-            Icons.menu,
+            Icons.arrow_back,
             size: 30,
             color: Colors.black,
           ),
           onPressed: () {
+            Navigator.of(context).pop();
             // _scaffoldKey.currentState.openDrawer();
           },
         ),
@@ -65,19 +70,23 @@ class _SettingScreenState extends State<SettingScreen> {
                 onTap: () {
                   Navigator.of(context).pushNamed(KProfileScreen);
                 },
-                leading: Container(
-                    // height: 70,
-                    // width: 70,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: Image.asset(
-                      'assets/images/person_3.png',
-                      height: 100,
-                      fit: BoxFit.fill,
-                    )),
+                leading: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.white12,
+                  child: new ClipRRect(
+                      borderRadius: new BorderRadius.circular(100.0),
+                      child: new Container(
+                          height: 50.0,
+                          width: 50.0,
+                          color: Colors.white30,
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Color(0xff24414D),
+                          ))),
+                ),
                 title: Text(
-                  'Balogun Rasheed',
+                  user.firstName + "  " + user.lastName,
                   style: TextStyle(
                       fontSize: 20,
                       color: Colors.black,

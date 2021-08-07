@@ -100,7 +100,7 @@ class _MenuScreensState extends State<MenuScreens> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                user.phone,
+                                user.firstName + "  " + user.lastName,
                                 // 'Balogun Rasheed',
                                 style: TextStyle(
                                     fontSize: 20,

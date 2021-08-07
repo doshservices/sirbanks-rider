@@ -6,20 +6,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   startTimer();
-  // }
-
-  // startTimer() async {
-  //   var duration = Duration(seconds: 4);
-  //   return Timer(duration, route);
-  // }
-
-  // route() {
-  //   Navigator.of(context).popAndPushNamed(kWalkthrough);
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(child: Image.asset("assets/images/logo.jpg", height: 80,width: 80,)),
+            Container(child: Image.asset("assets/images/logo.png", height: 80,width: 80,)),
             SizedBox(
               height: 10
             ),

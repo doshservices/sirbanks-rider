@@ -16,11 +16,12 @@ class _InviteFriendScreenState extends State<InviteFriendScreen> {
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(
-            Icons.menu,
+            Icons.arrow_back,
             size: 30,
             color: Colors.black,
           ),
           onPressed: () {
+            Navigator.of(context).pop();
             // _scaffoldKey.currentState.openDrawer();
           },
         ),
