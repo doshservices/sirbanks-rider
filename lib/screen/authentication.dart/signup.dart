@@ -41,14 +41,6 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_regFormKey.currentState.validate()) {
       return;
     }
-    // if (_selectedCountryType == "") {
-    //   _showShackBar("Select Country Code");
-    //   return;
-    // }
-    // if (_termsAndCondition == false) {
-    //   _showShackBar("Accept Terms and Condition");
-    //   return;
-    // }
     _regFormKey.currentState.save();
 
     setState(() {
@@ -338,24 +330,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                                 contentPadding: EdgeInsets.zero,
-                                // prefix: Row(
-                                //   children: [
-                                //     SizedBox(
-                                //       width: 5,
-                                //     ),
-                                //     Image.asset(
-                                //         'assets/icons/flag.png'),
-                                //     SizedBox(
-                                //       width: 5,
-                                //     ),
-                                //     Icon(Icons.arrow_drop_down),
-                                //     Text('+234', style: TextStyle(color: Colors.black)),
-                                //     SizedBox(
-                                //       width: 5,
-                                //     ),
-                                //   ],
-                                // ),
-                                
                               ),
                               validator: (value) {
                                 String pattern = r'(?=.*?[+])(?=.*?[0-9]).{14,}$';
@@ -379,72 +353,74 @@ class _SignupScreenState extends State<SignupScreen> {
                           ],
                         ),
                         SizedBox(height: 20),
-                        Column(
-                          children: [
-                            TextFormField(
-                              controller: _passwordController,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal),
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  focusColor: Colors.black,
-                                  hintText: "Password",
-                                  hintStyle: TextStyle(
+                        Form(
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _passwordController,
+                                style: TextStyle(
+                                    color: Colors.black,
                                     fontSize: 16,
-                                    color: Color(0xffC3BBBB),
                                     fontWeight: FontWeight.w400,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _hidePassword = !_hidePassword;
-                                      });
-                                    },
-                                    icon: _hidePassword
-                                        ? Icon(Icons.visibility_off,
-                                            color: Colors.grey)
-                                        : Icon(
-                                            Icons.visibility,
-                                            color: Colors.grey,
-                                          ),
-                                  )),
-                              validator: (value) {
-                                String pattern = r'^(?=.*?[a-z])';
-                                String pattern2 = r'^(?=.*?[0-9])';
-                                RegExp regExp = new RegExp(pattern);
-                                RegExp regExp2 = new RegExp(pattern2);
-                                if (value.isEmpty) {
-                                  return "Password can't be empty";
-                                }
-                                if (value.length < 7) {
-                                  return "Password must be between 7 to 30 characters";
-                                }
-                                if (regExp.hasMatch(value).toString() !=
-                                    "true") {
-                                  print(regExp.hasMatch(value));
-                                  return "Password must have at least one lowercase character !!";
-                                }
-                                if (regExp2.hasMatch(value).toString() !=
-                                    "true") {
-                                  print(regExp.hasMatch(value));
-                                  return "Password must have at least one digit character !!";
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                user.password = value;
-                              },
-                              obscureText: _hidePassword,
-                            ),
-                            Container(
-                              height: 1,
-                              width: double.infinity,
-                              color: Colors.black,
-                            )
-                          ],
+                                    fontStyle: FontStyle.normal),
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    focusColor: Colors.black,
+                                    hintText: "Password",
+                                    hintStyle: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xffC3BBBB),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _hidePassword = !_hidePassword;
+                                        });
+                                      },
+                                      icon: _hidePassword
+                                          ? Icon(Icons.visibility_off,
+                                              color: Colors.grey)
+                                          : Icon(
+                                              Icons.visibility,
+                                              color: Colors.grey,
+                                            ),
+                                    )),
+                                validator: (value) {
+                                  String pattern = r'^(?=.*?[a-z])';
+                                  String pattern2 = r'^(?=.*?[0-9])';
+                                  RegExp regExp = new RegExp(pattern);
+                                  RegExp regExp2 = new RegExp(pattern2);
+                                  if (value.isEmpty) {
+                                    return "Password can't be empty";
+                                  }
+                                  if (value.length < 7) {
+                                    return "Password must be between 7 to 30 characters";
+                                  }
+                                  if (regExp.hasMatch(value).toString() !=
+                                      "true") {
+                                    print(regExp.hasMatch(value));
+                                    return "Password must have at least one lowercase character !!";
+                                  }
+                                  if (regExp2.hasMatch(value).toString() !=
+                                      "true") {
+                                    print(regExp.hasMatch(value));
+                                    return "Password must have at least one digit character !!";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  user.password = value;
+                                },
+                                obscureText: _hidePassword,
+                              ),
+                              Container(
+                                height: 1,
+                                width: double.infinity,
+                                color: Colors.black,
+                              )
+                            ],
+                          ),
                         ),
                         SizedBox(height: 20),
                         Column(

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/model.dart';
 // import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:sirbank_rider/model/mapTypeModel.dart';
@@ -15,21 +19,23 @@ class DashboardScreen extends StatefulWidget {
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>
-    with TickerProviderStateMixin {
+class _DashboardScreenState extends State<DashboardScreen> with TickerProviderStateMixin {
+  LocationData _currentPosition;
+  String _address, _dateTime;
+  GoogleMapController mapController;
+  Marker marker;
+  Location location = Location();
   final String screenName = "HOME";
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   // Completer<GoogleMapController> _controller = Completer();
-
-  CameraPosition _kGooglePlex =
-      CameraPosition(target: LatLng(6.537216, 3.348890), zoom: 16);
+  GoogleMapController _controller;
 
   CircleId selectedCircle;
 
   String currentLocationName;
   String newLocationName;
   // String _placemark = '';
-  GoogleMapController mapController;
+  // GoogleMapController mapController;
   bool checkPlatform = Platform.isIOS;
   double distance = 0;
   bool nightMode = false;
@@ -56,7 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       // print(
       //     "Connecting Logged In User: ${auth.user.firstName}, ID: ${auth.user.id}");
       Auth.initSocket();
-      await Auth.socketUtils.initSocket(auth.token);
+      await Auth.socketUtils.initSocket(auth.token, auth.user.id);
       Auth.socketUtils.connectToSocket();
       Auth.socketUtils.setConnectListener(onConnect);
       Auth.socketUtils.setOnConnectionErrorListener(onConnectError);
@@ -90,8 +96,9 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   void initState() {
-    super.initState();
+    getLoc();
     _connectSocket();
+    super.initState();
     isSelected = [true, false];
   }
 
@@ -99,6 +106,21 @@ class _DashboardScreenState extends State<DashboardScreen>
   void dispose() {
     super.dispose();
   }
+  
+  LatLng _initialcameraposition = LatLng(6.465422, 3.406448);
+
+  void _onMapCreated(GoogleMapController _cntlr)
+  {
+    _controller = _cntlr;
+    location.onLocationChanged.listen((l) {
+      _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 10),
+        ),
+      );
+    });
+  }
+
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
@@ -206,13 +228,6 @@ class _DashboardScreenState extends State<DashboardScreen>
         false;
   }
 
-  // void _closeModalBottomSheet() {
-  //   if (_controller != null) {
-  //     _controller.close();
-  //     _controller = null;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     // riderRequest();
@@ -239,7 +254,16 @@ class _DashboardScreenState extends State<DashboardScreen>
           color: Colors.white,
           child: Stack(
             children: <Widget>[
-              _buildMapLayer(),
+              SizedBox(
+                child: GoogleMap(
+                        initialCameraPosition: CameraPosition(target: _initialcameraposition,
+                        zoom: 13),
+                        mapType: MapType.normal,
+                        onMapCreated: _onMapCreated,
+                        myLocationEnabled: true,
+                      ),
+              ),
+              // _buildMapLayer(),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Align(
@@ -247,7 +271,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   child: MyActivity(
                       userImage: null,
                       userName: '$firstName ',
-                      level: '',
+                      level: _address,
                       totalEarned: '\0',
                       hoursOnline: 0.0,
                       totalDistance: '',
@@ -261,17 +285,63 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildMapLayer() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: GoogleMap(
-        mapType: MapType.terrain,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          // _controller.complete(controller);
-        },
-        // markers: Set.from(markers),
-      ),
-    );
+  getLoc() async{
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _currentPosition = await location.getLocation();
+    _initialcameraposition = LatLng(_currentPosition.latitude,_currentPosition.longitude);
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      print("${currentLocation.longitude} : ${currentLocation.longitude}");
+      setState(() {
+        _currentPosition = currentLocation;
+        _initialcameraposition = LatLng(_currentPosition.latitude,_currentPosition.longitude);
+
+        DateTime now = DateTime.now();
+        _dateTime = DateFormat('EEE d MMM kk:mm:ss ').format(now);
+        _getAddress(_currentPosition.latitude, _currentPosition.longitude)
+            .then((value) {
+          setState(() {
+            _address = "${value.first.addressLine}";
+          });
+        });
+      });
+    });
   }
+
+  Future<List<Address>> _getAddress(double lat, double lang) async {
+    final coordinates = new Coordinates(lat, lang);
+    List<Address> add = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    return add;
+  }
+
+  // Widget _buildMapLayer() {
+  //   return SizedBox(
+  //     height: MediaQuery.of(context).size.height,
+  //     child: GoogleMap(
+  //       mapType: MapType.terrain,
+  //       initialCameraPosition: _kGooglePlex,
+  //       onMapCreated: (GoogleMapController controller) {
+  //         // _controller.complete(controller);
+  //       },
+  //       // markers: Set.from(markers),
+  //     ),
+  //   );
+  // }
 }

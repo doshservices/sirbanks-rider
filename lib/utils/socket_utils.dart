@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_socket_io/flutter_socket_io.dart';
@@ -5,7 +7,7 @@ import 'package:flutter_socket_io/flutter_socket_io.dart';
 class SocketUtils {
   static String _serverIP = 'https://sirbanks.herokuapp.com/';
   // static const int SERVER_PORT = 8080;
-  String token;
+  String token, id;
   // Event
   static const String UPDATE_LOCATION = 'UPDATE_LOCATION';
   static const String UPDATE_AVAILABILITY = 'UPDATE_AVAILABILITY';
@@ -34,9 +36,10 @@ class SocketUtils {
   IO.Socket socket;
   SocketIO socketIO;
 
-  initSocket(String token) async {
+  initSocket(String token, String id) async {
     print('Connecting user: ' + token);
     this.token = token;
+    this.id = id;
     await _init();
   }
 
@@ -50,14 +53,25 @@ class SocketUtils {
 
     socketIO.init();
 
-    socketIO.subscribe("SUCCESS", _socketConnect);
+    // socketIO.subscribe("SUCCESS", _socketConnect);
 
-    socketIO.subscribe("ERROR", _socketError);
+    // socketIO.subscribe("ERROR", _socketError);
+
+    //  var jsonData = jsonEncode({
+    //    "id": "$id",
+    //    "pickUpLat": "3.123455",
+    //    "pickUpLon": "3.123455",
+    //    "dropOffLat": "3.123455",
+    //    "dropOffLon": "3.123455"
+    //   });
+    //  socketIO.sendMessage("GET_TRIP_DETAILS", jsonData, _socketConnect);
+
+
   }
 
   _socketConnect(dynamic data) {
-    print("Socket status: " + data);
-    return data;
+    print("*******Socket status: " + data.toString());
+    // return data;
   }
 
   _socketError(dynamic data) {
@@ -109,8 +123,8 @@ class SocketUtils {
     // });
   }
 
-  void emitGetTripDetails(
-    String id,
+ emitGetTripDetails(
+    String id, pickUpLat, pickUpLon, dropOffLat, dropOffLon
   ) {
     print('sending out new video bc $id');
     if (null == socketIO) {
@@ -118,9 +132,16 @@ class SocketUtils {
       return;
     }
     if (socketIO != null) {
-      print('****** About to connect *******');
-      // String jsonData = '{"id": "$id","pickUpLat": "3.123455","pickUpLon": "3.123455","dropOffUpLat": "3.123455","dropOffLon": "3.123455",}';
-      // socketIO.sendMessage("TRIP_DETAILS", jsonData, _socketConnect);
+       socketIO.connect();
+      var jsonData = jsonEncode({
+       "id": "$id",
+       "pickUpLat": "6.514193",
+       "pickUpLon": "3.308678",
+       "dropOffLat": "6.605874",
+       "dropOffLon": "3.349149"
+      });
+      socketIO.sendMessage("GET_TRIP_DETAILS", jsonData, _socketConnect);
+      // socketIO.subscribe("SUCCESS", _onReceiveChatMessage);
     }
   }
 
@@ -129,11 +150,14 @@ class SocketUtils {
   //   onTripDetailSRecieved(data);
   // }
 
-  listenForNewCare(Function onTripDetailSRecieved) {
-    _onReceiveChatMessage(dynamic data) {
-      print("Message from UFO: " + data);
-      onTripDetailSRecieved(data);
+  _onReceiveChatMessage(dynamic data) {
+      print(" ****** OnTrip Detail ********* Message from UFO: " + data.toString());
+      // onTripDetailSRecieved(data);
     }
+
+  listenTRIPDETAILS(
+    // Function onTripDetailSRecieved
+    ) {
 
     if (socketIO != null) {
       socketIO.subscribe("TRIP_DETAILS", _onReceiveChatMessage);
@@ -143,4 +167,12 @@ class SocketUtils {
     //   onNewCareRecieved(data);
     // });
   }
+
+  listenError() {
+    if (socketIO != null) {
+      socketIO.subscribe("ERROR", _onReceiveChatMessage);
+    }
+  }
 }
+
+

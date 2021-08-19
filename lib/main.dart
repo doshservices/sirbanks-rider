@@ -10,6 +10,7 @@ import 'package:sirbank_rider/screen/Dashboard/language/language_screen.dart';
 import 'package:sirbank_rider/screen/Dashboard/notification/notification.dart';
 import 'package:sirbank_rider/screen/Dashboard/profile/profile_screen.dart';
 import 'package:sirbank_rider/screen/Dashboard/review/review_screen.dart';
+import 'package:sirbank_rider/screen/Dashboard/search/search_screen.dart';
 import 'package:sirbank_rider/screen/Dashboard/settings/settings.dart';
 import 'package:sirbank_rider/screen/Dashboard/termandcondiction/termandcondiction.dart';
 import 'package:sirbank_rider/screen/Dashboard/wallet/addcard_payment.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
             KPaymentMethod : (ctx) => PaymentMethod(),
             KCardPayment : (ctx) => CardPayment(),
             KAddCardPayment : (ctx) => AddCardPayment(),
+            KSearchScreen : (ctx) => SearchScreen(),
           });})
     );
   }

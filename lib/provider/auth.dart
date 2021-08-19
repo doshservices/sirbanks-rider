@@ -285,17 +285,6 @@ class Auth with ChangeNotifier {
       var resData = jsonDecode(response.body);
 
       print(resData);
-      // if (resData["status"] == null) {
-      //   throw HttpException(resData["error"]);
-      // }
-      // if (resData['status'] == 'success'){
-      //   CardModel cardModelvalue = CardModel();
-      //   cardModelvalue.accessCode = resData['data']['accessCode'];
-      //   cardModelvalue.authorizationUrl = resData['data']['authorizationUrl'];
-      //   cardModelvalue.reference = resData['data']['reference'];
-
-      //   cardModel = cardModelvalue;
-      // }
 
       notifyListeners();
     } catch (error) {
@@ -319,9 +308,6 @@ class Auth with ChangeNotifier {
       user.phone = extractedUserData["userPhone"];
       user.firstName = extractedUserData["firstname"];
       user.lastName = extractedUserData["lastname"];
-      // resData["data"]["firstName"];
-      //   userdata.lastName = resData["data"]["lastName"];
-      // user.pictureUrl = extractedUserData["pictureUrl"];
       notifyListeners();
       // _autoLogout();
       return true;

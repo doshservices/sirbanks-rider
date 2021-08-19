@@ -25,7 +25,7 @@ class SocketController with ChangeNotifier {
   }
 
   registerPractitionerListeners() {
-    Auth.socketUtils.listenForNewCare(onTripDetailSRecieved);
+    // Auth.socketUtils.listenForNewCare(onTripDetailSRecieved);
   }
 
   // registerPatientListeners() {

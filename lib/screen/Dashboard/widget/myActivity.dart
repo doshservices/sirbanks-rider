@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:sirbank_rider/provider/auth.dart';
 import 'package:sirbank_rider/provider/socket_controller.dart';
 import 'package:sirbank_rider/utils/shared/rounded_raisedbutton.dart';
+
+import '../../../constants.dart';
 // import '../../theme/style.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
 
@@ -147,7 +149,9 @@ class _MyActivityState extends State<MyActivity> {
                   'assets/icons/nav.png',
                   height: 30,
                 ),
-                title: Text('7, Conventry way, Ogba\n bus stop'),
+                title: Text(widget.level != null? widget.level:
+                  '7, Conventry way, Ogba\n bus stop'
+                  ),
                 trailing: Text('        '),
               )),
           Container(
@@ -167,22 +171,24 @@ class _MyActivityState extends State<MyActivity> {
               title: "Book ride",
               titleColor: Colors.white,
               buttonColor: Color(0xff24414D),
-              onPress: () async{
-                try{
-                  setState(() {
-                    _isloading = true;
-                  });
-                  await Auth.socketUtils.emitGetTripDetails(user.id);
-                  await Auth.socketUtils.listenForNewCare(SocketController().registerPractitionerListeners());
-                  setState(() {
-                    _isloading = false;
-                  });
-                }catch(e){
-                  setState(() {
-                    _isloading = false;
-                  });
-                  print(e.toString() + "rider");
-                }
+              onPress: () {
+                Navigator.of(context).pushNamed(KSearchScreen);
+                // try{
+                //   setState(() {
+                //     _isloading = true;
+                //   });
+                //   await Auth.socketUtils.emitGetTripDetails(user.id);
+                //   await Auth.socketUtils.listenTRIPDETAILS();
+                //   // SocketController().registerPractitionerListeners()
+                //   setState(() {
+                //     _isloading = false;
+                //   });
+                // }catch(e){
+                //   setState(() {
+                //     _isloading = false;
+                //   });
+                //   print(e.toString() + "rider");
+                // }
                 
                 // Navigator.of(context).pushNamed(kLoginScreen);
                 // Navigator.of(context).pushNamedAndRemoveUntil(
