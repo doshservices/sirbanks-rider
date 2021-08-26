@@ -31,3 +31,4 @@ const KPaymentMethod = 'paymentMethod';
 const KCardPayment = 'cardPayment';
 const KAddCardPayment = 'addCardPayment';
 const KSearchScreen = 'searchScreen';
+const KTripDetails = 'tripDetails';

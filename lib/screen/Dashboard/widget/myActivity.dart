@@ -100,7 +100,7 @@ class _MyActivityState extends State<MyActivity> {
                     ),
                   ),
                   Expanded(
-                    flex: 5,
+                    flex: 4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
@@ -150,17 +150,20 @@ class _MyActivityState extends State<MyActivity> {
                   height: 30,
                 ),
                 title: Text(widget.level != null? widget.level:
-                  '7, Conventry way, Ogba\n bus stop'
+                  '7, Conventry way, Ogba\n bus stop', 
+                  style: TextStyle(
+                    
                   ),
-                trailing: Text('        '),
+                  ),
+                trailing: Text('      '),
               )),
           Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
               height: 1,
               color: Color(0xff24414D)),
-          SizedBox(
-            height: 10
-          ),
+          // SizedBox(
+          //   height: 
+          // ),
           Container(
             margin: EdgeInsets.all(10),
             height: 55,

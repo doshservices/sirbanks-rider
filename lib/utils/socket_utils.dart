@@ -65,8 +65,6 @@ class SocketUtils {
     //    "dropOffLon": "3.123455"
     //   });
     //  socketIO.sendMessage("GET_TRIP_DETAILS", jsonData, _socketConnect);
-
-
   }
 
   _socketConnect(dynamic data) {
@@ -123,25 +121,45 @@ class SocketUtils {
     // });
   }
 
- emitGetTripDetails(
-    String id, pickUpLat, pickUpLon, dropOffLat, dropOffLon
-  ) {
+  emitGetTripDetails(String id, pickUpLat, pickUpLon, dropOffLat, dropOffLon) {
     print('sending out new video bc $id');
     if (null == socketIO) {
       print("Socket is Null, Cannot send message");
       return;
     }
     if (socketIO != null) {
-       socketIO.connect();
+      socketIO.connect();
       var jsonData = jsonEncode({
-       "id": "$id",
-       "pickUpLat": "6.514193",
-       "pickUpLon": "3.308678",
-       "dropOffLat": "6.605874",
-       "dropOffLon": "3.349149"
+        "id": "$id",
+        "pickUpLat": "6.514193",
+        "pickUpLon": "3.308678",
+        "dropOffLat": "6.605874",
+        "dropOffLon": "3.349149"
       });
       socketIO.sendMessage("GET_TRIP_DETAILS", jsonData, _socketConnect);
       // socketIO.subscribe("SUCCESS", _onReceiveChatMessage);
+    }
+  }
+
+  emitRequestRide() {
+    print('sending out new video bc $id');
+    if (null == socketIO) {
+      print("Socket is Null, Cannot send message");
+      return;
+    }
+    if (socketIO != null) {
+      socketIO.connect();
+      var jsonData = jsonEncode({
+        "id": "$id",
+        "pickUp": "Oshodi Bus Terminal Lagos",
+        "pickUpLon": "3.349149",
+        "pickUpLat": "6.605874",
+        "dropOff": "Ikeja along bus lagos",
+        "dropOffLon": "32.45",
+        "dropOffLat": "12.44",
+        "payment": {"method": "cash", "cardId": "null"}
+      });
+      socketIO.sendMessage("REQUEST_RIDE", jsonData, _socketConnect);
     }
   }
 
@@ -151,16 +169,14 @@ class SocketUtils {
   // }
 
   _onReceiveChatMessage(dynamic data) {
-      print(" ****** OnTrip Detail ********* Message from UFO: " + data.toString());
-      // onTripDetailSRecieved(data);
-    }
+    print(
+        " ****** OnTrip Detail ********* Message from UFO: " + data.toString());
+    // onTripDetailSRecieved;
+  }
 
-  listenTRIPDETAILS(
-    // Function onTripDetailSRecieved
-    ) {
-
+  listenTRIPDETAILS(Function onTripDetailSRecieved) {
     if (socketIO != null) {
-      socketIO.subscribe("TRIP_DETAILS", _onReceiveChatMessage);
+      socketIO.subscribe("TRIP_DETAILS", onTripDetailSRecieved);
     }
 
     // _socket.on(NEW_CARE).listen((data) {
@@ -174,5 +190,3 @@ class SocketUtils {
     }
   }
 }
-
-
