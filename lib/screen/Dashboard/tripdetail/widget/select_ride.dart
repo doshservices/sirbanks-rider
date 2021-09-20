@@ -152,7 +152,16 @@ class _SelectRideState extends State<SelectRide> {
                 titleColor: Colors.white,
                 buttonColor: Color(0xff24414D),
                 onPress: () async {
-                  await Auth.socketUtils.emitRequestRide();
+                  await Auth.socketUtils.connectToSocket();
+                  Future.delayed(Duration(seconds: 3)).then((value) async{
+                    await Auth.socketUtils.emitRequestRide();
+                  });
+                  
+                  Future.delayed(Duration(seconds: 10)).then((value) async{
+                    await Auth.socketUtils.listenONDriverAvailiable();
+                    await Auth.socketUtils.listenError();
+                  });
+                  
                   // Function onTripDetailSRecieved = Provider.of<SocketController>(context, listen: false).onTripDetailSRecieved;
                   // await Auth.socketUtils
                   //         .listenTRIPDETAILS(onTripDetailSRecieved);

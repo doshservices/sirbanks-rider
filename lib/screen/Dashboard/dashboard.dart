@@ -115,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     location.onLocationChanged.listen((l) {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 10),
+          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 18),
         ),
       );
     });
@@ -231,55 +231,52 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     // riderRequest();
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        key: _scaffoldKey,
-        drawer: new MenuScreens(activeScreenName: screenName),
-        appBar: AppBar(
-          elevation: 1,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu,
-              size: 30,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              _scaffoldKey.currentState.openDrawer();
-            },
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: new MenuScreens(activeScreenName: screenName),
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.menu,
+            size: 30,
+            color: Colors.black,
           ),
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
+          },
         ),
-        body: Container(
-          color: Colors.white,
-          child: Stack(
-            children: <Widget>[
-              SizedBox(
-                child: GoogleMap(
-                        initialCameraPosition: CameraPosition(target: _initialcameraposition,
-                        zoom: 13),
-                        mapType: MapType.normal,
-                        onMapCreated: _onMapCreated,
-                        myLocationEnabled: true,
-                      ),
-              ),
-              // _buildMapLayer(),
-              Align(
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Stack(
+          children: <Widget>[
+            SizedBox(
+              child: GoogleMap(
+                      initialCameraPosition: CameraPosition(target: _initialcameraposition,
+                      zoom: 20),
+                      mapType: MapType.normal,
+                      onMapCreated: _onMapCreated,
+                      myLocationEnabled: true,
+                    ),
+            ),
+            // _buildMapLayer(),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Align(
                 alignment: Alignment.bottomCenter,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: MyActivity(
-                      userImage: null,
-                      userName: '$firstName ',
-                      level: _address,
-                      totalEarned: '\0',
-                      hoursOnline: 0.0,
-                      totalDistance: '',
-                      totalJob: 0,),
-                ),
-              )
-            ],
-          ),
+                child: MyActivity(
+                    userImage: null,
+                    userName: '$firstName ',
+                    level: _address,
+                    totalEarned: '\0',
+                    hoursOnline: 0.0,
+                    totalDistance: '',
+                    totalJob: 0,),
+              ),
+            )
+          ],
         ),
       ),
     );

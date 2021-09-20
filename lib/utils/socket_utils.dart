@@ -183,6 +183,11 @@ class SocketUtils {
     //   onNewCareRecieved(data);
     // });
   }
+  listenONDriverAvailiable() {
+    if (socketIO != null) {
+      socketIO.subscribe("NO_DRIVER_FOUND", _onReceiveChatMessage);
+    }
+  }
 
   listenError() {
     if (socketIO != null) {
