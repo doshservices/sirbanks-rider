@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sirbank_rider/provider/auth.dart';
 import 'package:sirbank_rider/provider/socket_controller.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<Auth>(builder: (ctx, auth, _) {
             print(auth.isAuth);
             return 
-      MaterialApp(
+      GetMaterialApp(
           title: 'Sirbanks Driver',
           theme: ThemeData(
             primarySwatch: Colors.blue,
