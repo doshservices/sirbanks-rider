@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:sirbank_rider/provider/auth.dart';
-import 'package:sirbank_rider/provider/socket_controller.dart';
 import 'package:sirbank_rider/utils/shared/rounded_raisedbutton.dart';
 
 class SelectRide extends StatefulWidget {
@@ -53,7 +51,7 @@ class _SelectRideState extends State<SelectRide> {
                             Text(
                               "${widget.value['durationToRider'].toString()} / ${widget.value['distanceToRider'].toString()}",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 11,
                               ),
                             ),
                             SizedBox(width: 10),

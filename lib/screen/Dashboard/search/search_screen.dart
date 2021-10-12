@@ -192,9 +192,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       await Auth.socketUtils
                           .listenTRIPDETAILS(onTripDetailSRecieved);
                       await Auth.socketUtils.listenError();
-                      final data =
-                          Provider.of<SocketController>(context, listen: false)
-                              .getTrip;
+                      final data = Provider.of<SocketController>(context, listen: false).getTrip;
                       if (data != null) {
                         if (data['drivers'] != null) {
                           Navigator.of(context).pushNamed(KTripDetails, arguments: {'startloc': startaddress, 'endloc' : endaddress});

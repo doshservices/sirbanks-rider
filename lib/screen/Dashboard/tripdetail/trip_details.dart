@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:sirbank_rider/provider/socket_controller.dart';
 import 'widget/select_ride.dart';
@@ -420,31 +418,6 @@ class _TripDetailsState extends State<TripDetails> {
                         ),
                         SizedBox(
                           width: 50,
-                        ),
-                        Container(
-                          height: 50,
-                          child: GestureDetector(
-                            onTap: () {
-                              showbottomSheet(context);
-                            },
-                            child: Card(
-                              elevation: 2,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Center(
-                                    child: Row(
-                                  children: [
-                                    Text(address),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Icon(Icons.search),
-                                  ],
-                                )),
-                              ),
-                            ),
-                          ),
                         ),
                       ],
                     )),

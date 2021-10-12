@@ -49,6 +49,7 @@ dependencies:
   geocoder: ^0.2.1
   intl: ^0.16.1
   search_map_place: ^0.3.0
+  flutter_mapbox_navigation: ^0.0.19
 
 dev_dependencies:
   flutter_test:
