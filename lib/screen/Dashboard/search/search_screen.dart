@@ -36,6 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<Auth>(context, listen: true).user;
+    final arg = ModalRoute.of(context).settings.arguments as Map;
     return Scaffold(
       key: _scaffoldkey,
       backgroundColor: Color(0xffF2F2F2),
@@ -101,32 +102,46 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   SizedBox(width: 10),
                   Container(
+                    // height: 60,
                     width: MediaQuery.of(context).size.width - 60,
-                    child: SearchMapPlaceWidget(
-                      apiKey: config.googleMapKep,
-                      onSelected: (place) async {
-                        final geolocation = await place.geolocation;
-                        print(geolocation.coordinates.toString());
-                        var geoCord =
-                            geolocation.coordinates.toString().split(',');
-                        print(geoCord[0].split("(")[1].toString());
-                        print(geoCord[1].split(")")[0].toString());
-                        setState(() {
-                          startaddress = place.description;
-                          pickUpLat = geoCord[0].split("(")[1].toString();
-                          pickUpLon = geoCord[1].split(")")[0].toString();
-                        });
-                        // Longitude = geoCord[1].split(")")[0].toString();
-                        // print(Latitude.toString());
-                        // print(Longitude.toString());
-                        // getNearbylocations();
-                        // final bounds = GeoCoord(
-                        //   double.parse(Latitude),
-                        //   double.parse(Longitude),
-                        // );
-                        // GoogleMap.of(_key).moveCamera(bounds, animated: true, zoom: 16);
-                      },
-                    ),
+                    child: Card(
+                      elevation: 0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                            child: Text(arg['address']),
+                          ),
+                        ],
+                      ),
+                    )
+                    // SearchMapPlaceWidget(
+                    //   apiKey: config.googleMapKep,
+                    //   onSelected: (place) async {
+                    //     final geolocation = await place.geolocation;
+                    //     print(geolocation.coordinates.toString());
+                    //     var geoCord =
+                    //         geolocation.coordinates.toString().split(',');
+                    //     print(geoCord[0].split("(")[1].toString());
+                    //     print(geoCord[1].split(")")[0].toString());
+                    //     setState(() {
+                    //       startaddress = place.description;
+                    //       pickUpLat = geoCord[0].split("(")[1].toString();
+                    //       pickUpLon = geoCord[1].split(")")[0].toString();
+                    //     });
+                    //     // Longitude = geoCord[1].split(")")[0].toString();
+                    //     // print(Latitude.toString());
+                    //     // print(Longitude.toString());
+                    //     // getNearbylocations();
+                    //     // final bounds = GeoCoord(
+                    //     //   double.parse(Latitude),
+                    //     //   double.parse(Longitude),
+                    //     // );
+                    //     // GoogleMap.of(_key).moveCamera(bounds, animated: true, zoom: 16);
+                    //   },
+                    // ),
                   ),
                 ],
               ),
@@ -154,11 +169,15 @@ class _SearchScreenState extends State<SearchScreen> {
                         var geoCord =
                             geolocation.coordinates.toString().split(',');
                         print(geoCord[0].split("(")[1].toString());
-                        print(geoCord[1].split(")")[0].toString());
+                        print(geoCord[1].split(")")[0].toString().trim());
                         setState(() {
+                          print("********" + arg['lat'].toString().trim());
+                          startaddress = arg['address'].toString();
+                          pickUpLat = arg['lat'].toString();
+                          pickUpLon = arg['long'].toString();
                           endaddress = place.description;
                           dropOffLat = geoCord[0].split("(")[1].toString();
-                          dropOffLon = geoCord[1].split(")")[0].toString();
+                          dropOffLon = geoCord[1].split(")")[0].toString().trim();
                         });
                       },
                     ),
@@ -176,6 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 titleColor: Colors.white,
                 buttonColor: Color(0xff24414D),
                 onPress: () async {
+                  print(pickUpLat);
                   if (pickUpLat != null &&
                       pickUpLon != null &&
                       dropOffLat != null &&
@@ -196,11 +216,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           Provider.of<SocketController>(context, listen: false)
                               .getTrip;
                       if (data != null) {
-                        if (data['drivers'] != null) {
-                          Navigator.of(context).pushNamed(KTripDetails, arguments: {'startloc': startaddress, 'endloc' : endaddress});
-                        } else {
-                          _showShackBar("No driver available Now");
-                        }
+                        // if (data['drivers'] != null) {
+                          Navigator.of(context).pushNamed(KTripDetails, 
+                          arguments: {'startloc': startaddress, 'endloc' : endaddress, 'pickUpLat' : pickUpLat, 'pickUpLon' : pickUpLon, 'dropOffLat' : dropOffLat, 'dropOffLon' : dropOffLon});
+                        // } else {
+                        //   _showShackBar("No driver available Now");
+                        // }
                       } else {
                         print(data);
                         _showShackBar("No driver available Now");

@@ -1,12 +1,21 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
+// import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:sirbank_rider/model/mapTypeModel.dart';
 import 'package:sirbank_rider/provider/socket_controller.dart';
+import 'package:sirbank_rider/screen/Dashboard/tripdetail/widget/select_ride_accepted.dart';
 import 'widget/select_ride.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/model.dart';
+import 'package:intl/intl.dart';
+import 'dart:io' show Platform;
 
 class TripDetails extends StatefulWidget {
   const TripDetails({Key key}) : super(key: key);
@@ -16,13 +25,80 @@ class TripDetails extends StatefulWidget {
 }
 
 class _TripDetailsState extends State<TripDetails> {
+  LocationData _currentPosition;
+  String _address, _dateTime;
   Completer<GoogleMapController> _controller = Completer();
   String state, region, address = "Search Address";
   GlobalKey<FormState> _distributorFormKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+  Location location = Location();
   bool isLoading = false;
   bool _isInit = true;
+  double driverslat, driverslon;
   List<dynamic> distributor = [];
+  double _originLatitude, _originLongitude;
+  double _destLatitude, _destLongitude;
+  Map<MarkerId, Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
+  PolylinePoints polylinePoints = PolylinePoints();
+  double lat, long;
+
+  bool _isSearchProcessing = false;
+
+  StreamSubscription _locationSubscription;
+  GoogleMapController _mapController;
+  LatLng _initialcameraposition = LatLng(6.465422, 3.406448); 
+  final String screenName = "HOME";
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  // Completer<GoogleMapController> _controller = Completer();
+  // GoogleMapController _controller;
+
+  CircleId selectedCircle;
+
+  String currentLocationName;
+  String newLocationName;
+  // String _placemark = '';
+  // GoogleMapController mapController;
+  bool checkPlatform = Platform.isIOS;
+  double distance = 0;
+  bool nightMode = false;
+  VoidCallback showPersBottomSheetCallBack;
+  List<MapTypeModel> sampleData = new List<MapTypeModel>();
+  // Map<PolylineId, Polyline> _polyLines = <PolylineId, Polyline>{};
+  PolylineId selectedPolyline;
+  bool isShowDefault = false;
+  GoogleMapController _controller1;
+
+  List<bool> isSelected;
+  bool availableStatus;
+
+
+  @override
+  void initState() {
+    getLoc();
+    super.initState();
+    isSelected = [true, false];
+  }
+
+  @override
+  void dispose() {
+    if (_locationSubscription != null) {
+      _locationSubscription.cancel();
+    }
+    super.dispose();
+  }
+  void _onMapCreated(GoogleMapController _cntlr)
+  {
+    _controller1 = _cntlr;
+    location.onLocationChanged.listen((l) {
+      _controller1.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 18),
+        ),
+      );
+    });
+  }
 
   @override
   void didChangeDependencies() async {
@@ -32,6 +108,9 @@ class _TripDetailsState extends State<TripDetails> {
         _isInit = false;
         distributor = Provider.of<SocketController>(context, listen: false)
             .getTrip["drivers"];
+            print("////////  " + distributor.toString());
+        driverslat = distributor[0]['lat'];
+        driverslon = distributor[0]['lon'];
       });
       Iterable _markers = Iterable.generate(
         distributor.length,
@@ -43,302 +122,19 @@ class _TripDetailsState extends State<TripDetails> {
                 distributor[index]['lon'],
               ),
               onTap: () {
-                showbottomSheetValue(distributor[index], context);
+                // showbottomSheetValue(distributor[index], context);
               },
               infoWindow:
                   InfoWindow(title: distributor[index]['lat'].toString()));
         },
       );
       setState(() {
-        markers = _markers;
+        // markers = _markers;
       });
     }
     super.didChangeDependencies();
   }
 
-  void showbottomSheet(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        builder: (ctx) {
-          return StatefulBuilder(builder: (context, setState) {
-            return new Container(
-              height: 400,
-              width: MediaQuery.of(context).size.width,
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30))),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: _distributorFormKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Center(
-                            child: Container(
-                              width: 100,
-                              height: 5,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                showbottomSheet(context);
-                              },
-                              child: Text(
-                                "Search",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          });
-        });
-  }
-
-  void showbottomSheetValue(distributorModel, BuildContext context) {
-    final data = ModalRoute.of(context).settings.arguments as Map;
-    var value = Provider.of<SocketController>(context, listen: false).getTrip;
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        builder: (ctx) {
-          return StatefulBuilder(builder: (context, setState) {
-            return new Container(
-              height: 250,
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Color(0xff24414D), width: 1),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/icons/motor.png',
-                                    width: 60,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "${value['durationToRider'].toString()} / ${value['distanceToRider'].toString()}",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "To your \n Destination",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Color(0xff24414D), width: 1),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.my_location_outlined,
-                                    color: Color(0xffFB5448),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    data['startloc'].toString(),
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                    maxLines: 2,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on_rounded,
-                                    color: Color(0xff24414D),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    data['endloc'].toString(),
-                                    style: TextStyle(fontSize: 15),
-                                    maxLines: 2,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Color(0xff4CE4B1)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 5),
-                                child: Column(children: [
-                                  Image.asset('assets/icons/call.png'),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Call',
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ]),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Color(0xff4252FF)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 5),
-                                child: Column(children: [
-                                  Image.asset('assets/icons/chart.png'),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Call',
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ]),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Container(
-                              // height: 100,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Color(0xffBEC2CE)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 5),
-                                child: Column(children: [
-                                  Image.asset('assets/icons/cancel.png'),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Call',
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ]),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          });
-        });
-  }
-
-  CameraPosition _kGooglePlex =
-      CameraPosition(target: LatLng(6.537216, 3.348890), zoom: 5);
-
-  Future<void> _goToTheLake(_kLake) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Iterable markers = [];
 
   submit() async {
     FocusScope.of(context).unfocus();
@@ -355,16 +151,6 @@ class _TripDetailsState extends State<TripDetails> {
       });
       var loc = 'warri, Delta';
       print(address);
-      // List<Location> locations = await locationFromAddress(address);
-      // print("******" + locations.toString());
-      // print(locations[0].latitude);
-      // final CameraPosition _kLake = CameraPosition(
-      //     // bearing: 192.8334901395799,
-      //     target: LatLng(locations[0].latitude, locations[0].longitude),
-      //     tilt: 59.440717697143555,
-      //     zoom: 14);
-      // GoogleMap.of(_key).moveCamera(bounds, animated: true, zoom: 16);
-      // _goToTheLake(_kLake);
       setState(() {
         isLoading = false;
       });
@@ -391,12 +177,21 @@ class _TripDetailsState extends State<TripDetails> {
           : Stack(
               children: [
                 GoogleMap(
-                  mapType: MapType.terrain,
-                  initialCameraPosition: _kGooglePlex,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  markers: Set.from(markers),
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                    target: _initialcameraposition,
+                    zoom: 1,
+                  ),
+                  myLocationEnabled: true,
+                  tiltGesturesEnabled: true,
+                  compassEnabled: true,
+                  scrollGesturesEnabled: true,
+                  zoomGesturesEnabled: true,
+                  zoomControlsEnabled: false,
+                  markers: Set<Marker>.of(markers.values),
+                  polylines: Set<Polyline>.of(polylines.values),
+                  // circles: Set.of((circle != null) ? [circle] : []),
+                  onMapCreated: _onMapCreated,
                 ),
                 new Positioned(
                     top: 60,
@@ -421,53 +216,164 @@ class _TripDetailsState extends State<TripDetails> {
                         SizedBox(
                           width: 50,
                         ),
-                        Container(
-                          height: 50,
-                          child: GestureDetector(
-                            onTap: () {
-                              showbottomSheet(context);
-                            },
-                            child: Card(
-                              elevation: 2,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Center(
-                                    child: Row(
-                                  children: [
-                                    Text(address),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Icon(Icons.search),
-                                  ],
-                                )),
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     )),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: SelectRide(
-                      data : data,
-                      value : value
-                    ),
+                    child: Consumer<SocketController>(
+                    builder: (ctx, datavalue, _) {
+                      return datavalue.driverFound == null ?
+                      SelectRide(data: data, value: value): SelectRideAcceptedWidgt(data: datavalue.driverFound);}),
                   ),
                 )
               ],
             ),
     );
   }
-}
 
-class AppConstant {
-  static List<Map<String, dynamic>> list = [
-    {"title": "one", "id": "1", "lat": 23.7985053, "lon": 90.3842538},
-    {"title": "two", "id": "2", "lat": 23.802236, "lon": 90.3700},
-    {"title": "three", "id": "3", "lat": 23.8061939, "lon": 90.3771193},
-  ];
+  // void _onMapCreated(GoogleMapController controller) async {
+  //   _mapController = controller;
+  // }
+
+  _searchDialog(context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        content: Builder(
+          builder: (context) {
+            return Container();
+            // Search(query: widget.trackingNumber);
+          },
+        ),
+      ),
+    ).then(
+      (value) {
+        if (value != null) {
+          _initMarkers();
+          setState(() {});
+        }
+      },
+    );
+  }
+
+  //initialized marker and polylines
+  _initMarkers() {
+    final data = ModalRoute.of(context).settings.arguments as Map;
+    // {"duration":"1 hour 6 mins","distance":"20.0 km","estimatedFare":{"lowerEstimate":2000,"higherEstimate":2200},
+// "durationToRider":"2 hours 30 mins","distanceToRider":"37.0 km","drivers":[{"lon":3.2038342,"lat":6.6582027}]}
+
+    _originLatitude = double.parse(driverslat.toString());
+    _originLongitude = double.parse(driverslon.toString());
+    _destLatitude = double.parse(lat.toString());
+    _destLongitude = double.parse(long.toString());
+
+    /// origin marker
+    _addMarker(LatLng(_originLatitude, _originLongitude), "Pickup",
+        BitmapDescriptor.defaultMarker);
+
+    /// destination marker
+    _addMarker(LatLng(_destLatitude, _destLongitude), "Destination",
+        BitmapDescriptor.defaultMarkerWithHue(118));
+
+    _getPolyline();
+  }
+
+//get cordinates
+  _getPolyline() async {
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      "AIzaSyCgeGrZMAyo5CWsgP6YcYTYaHmVcDkRYB4",
+      PointLatLng(_originLatitude, _originLongitude),
+      PointLatLng(_destLatitude, _destLongitude),
+      travelMode: TravelMode.driving,
+      //wayPoints: [PolylineWayPoint(location: "$pickupAddress")],
+    );
+
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    _addPolyLine();
+  }
+
+//polyling functions
+
+  _addPolyLine() {
+    PolylineId id = PolylineId("poly");
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.blue, points: polylineCoordinates);
+    polylines[id] = polyline;
+    setState(() {});
+  }
+
+//add pickup and destination markers
+  _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
+    MarkerId markerId = MarkerId(id);
+    Marker marker = Marker(
+      markerId: markerId,
+      icon: descriptor,
+      position: position,
+      infoWindow: InfoWindow(
+        title: "$id",
+      ),
+    );
+    markers[markerId] = marker;
+  }
+
+  getLoc() async{
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _currentPosition = await location.getLocation();
+    _initialcameraposition = LatLng(_currentPosition.latitude,_currentPosition.longitude);
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      print("${currentLocation.longitude} : ${currentLocation.longitude}");
+      setState(() {
+        _currentPosition = currentLocation;
+        _initialcameraposition = LatLng(_currentPosition.latitude,_currentPosition.longitude);
+
+        DateTime now = DateTime.now();
+        _dateTime = DateFormat('EEE d MMM kk:mm:ss ').format(now);
+        _getAddress(_currentPosition.latitude, _currentPosition.longitude)
+            .then((value) {
+          setState(() {
+            lat = _currentPosition.latitude;
+            long = _currentPosition.longitude;
+            _address = "${value.first.addressLine}";
+            _initMarkers();
+          });
+        });
+      });
+    });
+  }
+
+  Future<List<Address>> _getAddress(double lat, double lang) async {
+    final coordinates = new Coordinates(lat, lang);
+    List<Address> add = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    return add;
+  }
 }

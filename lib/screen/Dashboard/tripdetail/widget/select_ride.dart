@@ -53,14 +53,15 @@ class _SelectRideState extends State<SelectRide> {
                             Text(
                               "${widget.value['durationToRider'].toString()} / ${widget.value['distanceToRider'].toString()}",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500
                               ),
                             ),
                             SizedBox(width: 10),
                             Text(
                               "N${widget.value['estimatedFare']['lowerEstimate'].toString()} - N${widget.value['estimatedFare']['higherEstimate'].toString()}",
                               style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w700),
+                                  fontSize: 12, fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -154,14 +155,19 @@ class _SelectRideState extends State<SelectRide> {
                 onPress: () async {
                   await Auth.socketUtils.connectToSocket();
                   Future.delayed(Duration(seconds: 3)).then((value) async{
-                    await Auth.socketUtils.emitRequestRide();
+                    await Auth.socketUtils.emitRequestRide(widget.value, widget.data);
                   });
                   
-                  Future.delayed(Duration(seconds: 10)).then((value) async{
-                    await Auth.socketUtils.listenONDriverAvailiable();
+                  Future.delayed(Duration(seconds: 5)).then((value) async{
+                    // await Auth.socketUtils.listenONDriverAvailiable();
                     await Auth.socketUtils.listenError();
                   });
-                  
+                  Function onDRIVERFOUND = Provider.of<SocketController>(context, listen: false).onDRIVERFOUND;
+                  await Auth.socketUtils.listenDriverFound(onDRIVERFOUND);
+                  Function onNoDRIVERFOUND = Provider.of<SocketController>(context, listen: false).onNoDRIVERFOUND;
+                  await Auth.socketUtils.listenNoDriverFound(onNoDRIVERFOUND);
+                  Function onEndtrip = Provider.of<SocketController>(context, listen: false).onTripEnded;
+                  await Auth.socketUtils.listenTripEnded(onEndtrip);
                   // Function onTripDetailSRecieved = Provider.of<SocketController>(context, listen: false).onTripDetailSRecieved;
                   // await Auth.socketUtils
                   //         .listenTRIPDETAILS(onTripDetailSRecieved);

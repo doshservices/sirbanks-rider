@@ -55,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   var requestAccepted;
   var tripcancledByrider;
   String rideTripId;
+  double lat, long;
 
   _connectSocket() {
     final auth = Provider.of<Auth>(context, listen: false);
@@ -273,7 +274,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                     totalEarned: '\0',
                     hoursOnline: 0.0,
                     totalDistance: '',
-                    totalJob: 0,),
+                    totalJob: 0,
+                    lat: lat,
+                    long: long
+                  ),
               ),
             )
           ],
@@ -315,6 +319,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
         _getAddress(_currentPosition.latitude, _currentPosition.longitude)
             .then((value) {
           setState(() {
+            lat = _currentPosition.latitude;
+            long = _currentPosition.longitude;
             _address = "${value.first.addressLine}";
           });
         });

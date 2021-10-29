@@ -131,17 +131,18 @@ class SocketUtils {
       socketIO.connect();
       var jsonData = jsonEncode({
         "id": "$id",
-        "pickUpLat": "6.514193",
-        "pickUpLon": "3.308678",
-        "dropOffLat": "6.605874",
-        "dropOffLon": "3.349149"
+        "pickUpLat": pickUpLat.toString(),
+        "pickUpLon": pickUpLon.toString(),
+        "dropOffLat": dropOffLat.toString(),
+        "dropOffLon": dropOffLon.toString()
       });
+      print(jsonData);
       socketIO.sendMessage("GET_TRIP_DETAILS", jsonData, _socketConnect);
       // socketIO.subscribe("SUCCESS", _onReceiveChatMessage);
     }
   }
 
-  emitRequestRide() {
+  emitCancelTrip(Map<String, dynamic> data) {
     print('sending out new video bc $id');
     if (null == socketIO) {
       print("Socket is Null, Cannot send message");
@@ -150,23 +151,48 @@ class SocketUtils {
     if (socketIO != null) {
       socketIO.connect();
       var jsonData = jsonEncode({
+        "id": id,
+        "role": "rider",
+        "tripId": data["tripId"].toString()
+      });
+      print(jsonData);
+      socketIO.sendMessage("CANCEL_TRIP", jsonData, _socketConnect);
+      // socketIO.subscribe("SUCCESS", _onReceiveChatMessage);
+    }
+  }
+
+  emitRequestRide(Map datavalue, Map data) {
+    print('sending out new video bc $id');
+    print(data);
+    if (null == socketIO) {
+      print("Socket is Null, Cannot send message");
+      return;
+    }
+    if (socketIO != null) {
+      socketIO.connect();
+      var jsonData = jsonEncode({
         "id": "$id",
-        "pickUp": "Oshodi Bus Terminal Lagos",
-        "pickUpLon": "3.349149",
-        "pickUpLat": "6.605874",
-        "dropOff": "Ikeja along bus lagos",
-        "dropOffLon": "32.45",
-        "dropOffLat": "12.44",
+        "pickUp": data['startloc'],
+        "pickUpLon": data['pickUpLon'],
+        "pickUpLat": data['pickUpLat'],
+        "dropOff": data['endloc'],
+        "dropOffLon": data['dropOffLon'],
+        "dropOffLat": data['dropOffLat'],
         "payment": {"method": "cash", "cardId": "null"}
       });
+      print(jsonData);
       socketIO.sendMessage("REQUEST_RIDE", jsonData, _socketConnect);
     }
   }
 
-  // void _onReceiveChatMessage(dynamic message) {
-  //   print("Message from UFO: " + message);
-  //   onTripDetailSRecieved(data);
-  // }
+  // {"tripId":"61790fe2b92a3d001dd685c8","driverId":"6126464b4fa00f001d025c09","pickUp":"3 Idera St, Onipanu 102215, Lagos, Nigeria",
+  // "pickUpLon":"3.3611656","pickUpLat":"6.5361457","dropOff":"Oshodi, Lagos, Nigeria","dropOffLon":"3.308677799999998",
+  // "dropOffLat":"6.535498","distance":"18.6 km","duration":"46 mins","estimatedFare":{"lowerEstimate":1800,"higherEstimate":1900},
+  // "distanceToRider":"92 m","durationToRider":"1 min","driverDetails":{"driverName":"Chris","phone":"+2348141240575",
+  // "avatar":"https://res.cloudinary.com/viola/image/upload/v1629898479/drivers/avatars/PB-C855127EA1854DC5B6E1FFA503498AFF.jpg",
+  // "lon":"3.3606927","lat":"6.5359265",
+  // "vehicleDetails":{"make":"AC","model":"428 Fastback","year":2010,"color":"RED","numberPlate":"JAJD52882"}}}
+
 
   _onReceiveChatMessage(dynamic data) {
     print(
@@ -183,15 +209,38 @@ class SocketUtils {
     //   onNewCareRecieved(data);
     // });
   }
-  listenONDriverAvailiable() {
-    if (socketIO != null) {
-      socketIO.subscribe("NO_DRIVER_FOUND", _onReceiveChatMessage);
-    }
-  }
+  // listenONDriverAvailiable() {
+  //   if (socketIO != null) {
+  //     socketIO.subscribe("NO_DRIVER_FOUND", _onReceiveChatMessage);
+  //   }
+  // }
 
   listenError() {
     if (socketIO != null) {
       socketIO.subscribe("ERROR", _onReceiveChatMessage);
+    }
+  }
+
+  listenDriverFound(Function onDRIVERFOUND) {
+    if (socketIO != null) {
+      socketIO.subscribe("DRIVER_FOUND", onDRIVERFOUND);
+    }
+  }
+  listenTripEnded(Function onDRIVERFOUND) {
+    if (socketIO != null) {
+      socketIO.subscribe("END_TRIP", onDRIVERFOUND);
+    }
+  }
+
+  listenNoDriverFound(Function onNoDRIVERFOUND) {
+    if (socketIO != null) {
+      socketIO.subscribe("NO_DRIVER_FOUND", onNoDRIVERFOUND);
+    }
+  }
+
+  listenCancelTrip(Function onNoDRIVERFOUND) {
+    if (socketIO != null) {
+      socketIO.subscribe("TRIP_CANCELED", onNoDRIVERFOUND);
     }
   }
 }

@@ -16,6 +16,7 @@ class MyActivity extends StatefulWidget {
   final double hoursOnline;
   final String totalDistance;
   final int totalJob;
+  final double lat , long;
 
   const MyActivity({
     Key key,
@@ -26,6 +27,8 @@ class MyActivity extends StatefulWidget {
     this.hoursOnline,
     this.totalDistance,
     this.totalJob,
+    this.lat,
+    this.long
   }) : super(key: key);
 
   @override
@@ -175,7 +178,7 @@ class _MyActivityState extends State<MyActivity> {
               titleColor: Colors.white,
               buttonColor: Color(0xff24414D),
               onPress: () {
-                Navigator.of(context).pushNamed(KSearchScreen);
+                Navigator.of(context).pushNamed(KSearchScreen, arguments: {'lat': widget.lat, 'long': widget.long, 'address' : widget.level});
                 // try{
                 //   setState(() {
                 //     _isloading = true;
