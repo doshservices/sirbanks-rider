@@ -216,12 +216,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           Provider.of<SocketController>(context, listen: false)
                               .getTrip;
                       if (data != null) {
-                        // if (data['drivers'] != null) {
+                        if (data['drivers'] != null) {
                           Navigator.of(context).pushNamed(KTripDetails, 
                           arguments: {'startloc': startaddress, 'endloc' : endaddress, 'pickUpLat' : pickUpLat, 'pickUpLon' : pickUpLon, 'dropOffLat' : dropOffLat, 'dropOffLon' : dropOffLon});
-                        // } else {
-                        //   _showShackBar("No driver available Now");
-                        // }
+                        } else {
+                          _showShackBar("No driver available Now");
+                        }
                       } else {
                         print(data);
                         _showShackBar("No driver available Now");

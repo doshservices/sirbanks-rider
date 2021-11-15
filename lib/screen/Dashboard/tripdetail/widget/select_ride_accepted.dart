@@ -123,7 +123,7 @@ class _SelectRideAcceptedWidgtState extends State<SelectRideAcceptedWidgt> {
                       //     ),
                       //   ],
                       // ),
-                      SizedBox(height: 10)
+                      // SizedBox(height: 10)
                     ],
                   )),
               // if (startTrip == true)
@@ -146,7 +146,7 @@ class _SelectRideAcceptedWidgtState extends State<SelectRideAcceptedWidgt> {
               //               startTrip = false;
               //             });
               //           })),
-              if (startTrip == false)
+              // if (startTrip == false)
                 Container(
                     margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     height: 55,

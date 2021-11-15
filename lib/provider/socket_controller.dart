@@ -65,7 +65,7 @@ class SocketController with ChangeNotifier {
   // }
 
   onTripDetailSRecieved(String datavalue) {
-    print("new video arrived");
+    print("TripDetailSRecieved");
     print(datavalue);
     // print("+++++++++++"+ datavalue['duration'].toString());
     var data = jsonDecode(datavalue);
@@ -131,7 +131,7 @@ class SocketController with ChangeNotifier {
 
   onTripEnded(String datavalue) {
     print(datavalue);
-    print("Drive Found+++++++++++  " + datavalue.toString());
+    print("Trip Ended+++++++++++  " + datavalue.toString());
     var data = jsonDecode(datavalue);
     print("+++++++++++");
     if (data != null) {
